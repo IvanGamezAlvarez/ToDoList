@@ -1,0 +1,19 @@
+import express from "express";
+import cors from "cors";
+import ListController from "./controllers/listController.js";
+
+const port = "3001";
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const listController = new ListController();
+
+app.post("/list", listController.register);
+
+app.get("/list", listController.getTables);
+
+app.listen(port, () => {
+  console.log("we are running, observer in port " + port);
+});
