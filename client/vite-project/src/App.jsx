@@ -10,26 +10,24 @@ function App() {
   );
   const [tableData, setTableData] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/list").then(function (response) {
-      setTableData(response.data);
-    });
-  }, []);
-
-  const getList = () => {
-    axios.get("http://localhost:3001/list").then(function (response) {
+  const getList = async() => {
+    await axios.get("http://localhost:3001/list").then(function (response) {
       setTableData(response.data);
     });
   };
 
-  const submitForm = () => {
+  useEffect(() => {
+    getList()
+  }, []);
+
+  const submitForm = async () => {
     if (formValue.length === 0) {
       setStatusMessage("La informacion no puede estar vacia");
     } else if (formValue.length > 80) {
       setStatusMessage("El limite de caracteres es de 80");
       setFormValue("");
     } else {
-      axios.post("http://localhost:3001/list", { formContent: formValue });
+      await axios.post("http://localhost:3001/list", { formContent: formValue });
       setStatusMessage("Informacion agregada correctamente");
       setFormValue("");
       getList();
@@ -60,12 +58,12 @@ function App() {
         }}
       />
       <h2 className="text-2xl font-bold mt-5">Things to do:</h2>
-      <div>
+      <div className=" flex items-center justify-center  flex-wrap">
         {tableData.map((data) => {
           if (data.task == "") {
             return;
           } else {
-            return <ToDoElement key={data.id} task={data.task} />;
+            return <ToDoElement key={data.id} data={data} />;
           }
         })}
       </div>
