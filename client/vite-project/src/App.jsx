@@ -12,15 +12,10 @@ function App() {
   const getList = async () => {
     try {
       const listDB = await axios.get("http://localhost:3001/list");
-      console.log("Datos recibidos:", listDB.data);
       setTableData(listDB.data);
     } catch (error) {
       console.log(error);
     }
-    //other ways:
-    // await axios.get("http://localhost:3001/list").then(function (response) {
-    //   setTableData(response.data);
-    // });
   };
 
   useEffect(() => {
