@@ -5,65 +5,81 @@ import ToDoElement from "./components/toDoElement";
 
 function App() {
   const [formValue, setFormValue] = useState("");
-  const [statusMessage, setStatusMessage] = useState(
-    "Ingrese la tarea por hacer"
-  );
+
+  const [statusMessage, setStatusMessage] = useState("Write a task to do");
   const [tableData, setTableData] = useState([]);
 
-  const getList = async() => {
-    await axios.get("http://localhost:3001/list").then(function (response) {
-      setTableData(response.data);
-    });
+  const getList = async () => {
+    try {
+      const listDB = await axios.get("http://localhost:3001/list");
+      console.log("Datos recibidos:", listDB.data);
+      setTableData(listDB.data);
+    } catch (error) {
+      console.log(error);
+    }
+    //other ways:
+    // await axios.get("http://localhost:3001/list").then(function (response) {
+    //   setTableData(response.data);
+    // });
   };
 
   useEffect(() => {
-    getList()
+    getList();
   }, []);
 
   const submitForm = async () => {
     if (formValue.length === 0) {
-      setStatusMessage("La informacion no puede estar vacia");
+      setStatusMessage("The task cant be empty");
+      return;
     } else if (formValue.length > 80) {
-      setStatusMessage("El limite de caracteres es de 80");
-      setFormValue("");
-    } else {
-      await axios.post("http://localhost:3001/list", { formContent: formValue });
-      setStatusMessage("Informacion agregada correctamente");
+      setStatusMessage("The character limit is 80");
+      return;
+    }
+    try {
+      await axios.post("http://localhost:3001/list", {
+        formContent: formValue,
+      });
+      setStatusMessage("Task added succefully");
       setFormValue("");
       getList();
+    } catch (e) {
+      console.error(e);
     }
   };
 
   return (
     <>
-      <h1 className="text-3xl font-extrabold p-5 mt-10 uppercase">
-        To do list{" "}
+      <h1 className="text-5xl font-extrabold p-5 mt-10 uppercase">
+        To do list
       </h1>
+      <p className="m-3  text-2xl font-bold">Write a task to do:</p>
       <input
         type="text"
         value={formValue}
-        className="block border-1 yellow m-auto"
+        className="block border-1 yellow m-auto  text-center"
+        placeholder='"Buy milk"'
         onChange={(e) => {
           setFormValue(e.target.value);
         }}
       />
-      <p className="m-3">{statusMessage}</p>
+      <p className="m-4">{statusMessage}</p>
       <input
         type="submit"
+        content="Send"
         name=""
         id=""
-        className="m-5 bg-amber-400 px-4 py-1 rounded-sm hover:bg-amber-600"
-        onClick={() => {
-          submitForm();
-        }}
+        className="m-5 bg-indigo-500 px-4 py-1 rounded-sm hover:bg-indigo-800  hover:scale-110 "
+        onClick={submitForm}
       />
-      <h2 className="text-2xl font-bold mt-5">Things to do:</h2>
-      <div className=" flex items-center justify-center  flex-wrap">
+
+      <div className=" flex items-center justify-center  flex-wrap ">
         {tableData.map((data) => {
           if (data.task == "") {
             return;
           } else {
-            return <ToDoElement key={data.id} data={data} />;
+            return (
+              <ToDoElement key={data.id} data={data} updateTable={getList} />
+            );
           }
         })}
       </div>
