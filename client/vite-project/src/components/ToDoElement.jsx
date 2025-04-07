@@ -55,7 +55,6 @@ export default function ToDoElement({ data, updateTable }) {
       <button
         className=" bg-emerald-600 mx-2 p-3 rounded-sm hover:bg-emerald-800  hover:scale-110"
         onClick={() => {
-          console.log("hola");
           if (editState) {
             SetEditState(false);
           } else {

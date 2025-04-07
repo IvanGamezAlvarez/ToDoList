@@ -3,7 +3,6 @@ import connection from "../mysql.js";
 class ListController {
   register = async (req, res) => {
     const { formContent } = req.body;
-    console.log(formContent);
     try {
       await connection.query(
         "INSERT INTO `to_do_list` (task) VALUES (?)",
